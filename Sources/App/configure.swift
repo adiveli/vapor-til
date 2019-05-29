@@ -20,7 +20,24 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var databases = DatabasesConfig()
     
     // Configure a SQLite database
-    let databaseConfig = PostgreSQLDatabaseConfig(hostname: "localhost", port: 5432, username: "vapor", database: "vapor", password: "password")
+    
+    
+    let databaseName: String
+    let databasePort: Int
+    
+    if(env == .testing){
+        databaseName = "vapor-test"
+        databasePort = 5433
+    } else {
+        databaseName = "vapor"
+        databasePort = 5432
+    }
+    
+    let hostname = Environment.get("DATABASE_HOSTNAME") ?? "localhost"
+    let username = Environment.get("DATABASE_USER") ?? "vapor"
+    let password = Environment.get("DATABASE_PASSWORD") ?? "password"
+    
+    let databaseConfig = PostgreSQLDatabaseConfig(hostname: hostname, port: databasePort, username: username, database: databaseName, password: password)
 
 
     var database = PostgreSQLDatabase(config: databaseConfig)
